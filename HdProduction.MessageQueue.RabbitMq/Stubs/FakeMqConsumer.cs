@@ -4,7 +4,7 @@ namespace HdProduction.MessageQueue.RabbitMq.Stubs
 {
     public class FakeMqConsumer : IRabbitMqConsumer
     {
-        public IRabbitMqConsumer Subscribe<T>() where T : HdEvent
+        public IRabbitMqConsumer Subscribe<T>() where T : HdMessage
         {
             return this;
         }

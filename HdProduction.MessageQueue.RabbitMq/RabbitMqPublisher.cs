@@ -12,8 +12,8 @@ namespace HdProduction.MessageQueue.RabbitMq
 {
   public interface IRabbitMqPublisher
   {
-    void Publish(HdEvent @event);
-    Task PublishAsync(HdEvent @event);
+    void Publish(HdMessage @event);
+    Task PublishAsync(HdMessage @event);
   }
 
   public class RabbitMqPublisher : IRabbitMqPublisher
@@ -25,7 +25,7 @@ namespace HdProduction.MessageQueue.RabbitMq
       _connection = connection;
     }
 
-    public void Publish(HdEvent @event)
+    public void Publish(HdMessage @event)
     {
       using (var channel = _connection.CreateChannel())
       {
@@ -41,7 +41,7 @@ namespace HdProduction.MessageQueue.RabbitMq
       }
     }
 
-    public Task PublishAsync(HdEvent @event)
+    public Task PublishAsync(HdMessage @event)
     {
       return Task.Run(() => Publish(@event));
     }

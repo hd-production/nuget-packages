@@ -1,6 +1,6 @@
 namespace HdProduction.MessageQueue.RabbitMq.Events.AppBuilds
 {
-    public class SelfHostBuildingFailedEvent : HdEvent
+    public class SelfHostBuildingFailedMessage : HdMessage
     {
         public long ProjectId { get; set; }
         public string Exception { get; set; }

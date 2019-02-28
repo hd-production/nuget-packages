@@ -12,7 +12,7 @@ namespace HdProduction.MessageQueue.RabbitMq
 {
   public interface IRabbitMqConsumer
   {
-    IRabbitMqConsumer Subscribe<T>() where T : HdEvent;
+    IRabbitMqConsumer Subscribe<T>() where T : HdMessage;
     void StartConsuming();
   }
 
@@ -21,7 +21,7 @@ namespace HdProduction.MessageQueue.RabbitMq
     private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
     
     private IModel _consumerChannel;
-    private readonly Dictionary<string, Type> _supportedEvents;
+    private readonly Dictionary<string, Type> _supportedMessages;
     private readonly string _queueName;
     private readonly MessageHandler _messageHandler;
     private readonly IRabbitMqConnection _connection;
@@ -31,12 +31,12 @@ namespace HdProduction.MessageQueue.RabbitMq
       _queueName = queueName;
       _messageHandler = new MessageHandler(serviceProvider);
       _connection = connection;
-      _supportedEvents = new Dictionary<string, Type>();
+      _supportedMessages = new Dictionary<string, Type>();
     }
 
-    public IRabbitMqConsumer Subscribe<T>() where T : HdEvent
+    public IRabbitMqConsumer Subscribe<T>() where T : HdMessage
     {
-      _supportedEvents.Add(typeof(T).Name, typeof(T));
+      _supportedMessages.Add(typeof(T).Name, typeof(T));
       return this;
     }
 
@@ -44,7 +44,7 @@ namespace HdProduction.MessageQueue.RabbitMq
     {
       _consumerChannel = CreateConsumerChannel();
 
-      foreach (string eventName in _supportedEvents.Keys)
+      foreach (string eventName in _supportedMessages.Keys)
       {
         _consumerChannel.QueueBind(_queueName, _connection.Exchange, eventName);
       }
@@ -77,12 +77,12 @@ namespace HdProduction.MessageQueue.RabbitMq
         string eventName = args.RoutingKey;
         string message = Encoding.UTF8.GetString(args.Body);
 
-        if (!_supportedEvents.ContainsKey(eventName))
+        if (!_supportedMessages.ContainsKey(eventName))
         {
           return;
         }
 
-        await _messageHandler.ProcessAsync(_supportedEvents[eventName], message);
+        await _messageHandler.ProcessAsync(_supportedMessages[eventName], message);
         _consumerChannel.BasicAck(args.DeliveryTag, false);
       }
       catch (Exception ex)

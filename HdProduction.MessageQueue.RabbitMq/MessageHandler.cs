@@ -25,8 +25,8 @@ namespace HdProduction.MessageQueue.RabbitMq
 
       var meta = _handlerTypesCache.GetOrAdd(eventType, key =>
       {
-        Type handlerType = typeof(IEventHandler<>).MakeGenericType(key);
-        return new HandlerMetadata(handlerType.GetMethod(nameof(IEventHandler<HdEvent>.HandleAsync)),
+        Type handlerType = typeof(IMessageHandler<>).MakeGenericType(key);
+        return new HandlerMetadata(handlerType.GetMethod(nameof(IMessageHandler<HdMessage>.HandleAsync)),
           typeof(IEnumerable<>).MakeGenericType(handlerType));
       });
 

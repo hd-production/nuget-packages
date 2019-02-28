@@ -14,7 +14,7 @@ namespace HdProduction.App.Common
         {
             return services.AddMvcCore().AddAuthorization().AddFormatterMappings().AddJsonFormatters().AddCors().AddApiExplorer();
         }
-        
+
         public static void AddMessageQueue<THandler>(this IServiceCollection services, 
             IConfigurationSection mqConfigurationSection)
         {
@@ -33,11 +33,11 @@ namespace HdProduction.App.Common
             }
 
             foreach (var eventHandler in typeof(THandler).GetTypeInfo().Assembly.GetTypes()
-                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(typeof(IEventHandler<>)))
+                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(typeof(IMessageHandler<>)))
                             && !t.IsInterface))
             {
                 foreach (var @interface in eventHandler.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(typeof(IEventHandler<>))))
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(typeof(IMessageHandler<>))))
                 {
                     services.AddTransient(@interface, eventHandler);
                 }

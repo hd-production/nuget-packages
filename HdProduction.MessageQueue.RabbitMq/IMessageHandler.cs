@@ -3,7 +3,7 @@ using HdProduction.MessageQueue.RabbitMq.Events;
 
 namespace HdProduction.MessageQueue.RabbitMq
 {
-  public interface IEventHandler<in T> where T : HdEvent
+  public interface IMessageHandler<in T> where T : HdMessage
   {
     Task HandleAsync(T ev);
   }

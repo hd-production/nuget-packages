@@ -32,7 +32,7 @@ namespace HdProduction.App.Common
                 policyBuilder.WithHeaders(headers.Split(','));
         }
         
-        public static IRabbitMqConsumer SetEventConsumer(this IApplicationBuilder app)
+        public static IRabbitMqConsumer SetMessageConsumer(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {

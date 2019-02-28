@@ -5,11 +5,11 @@ namespace HdProduction.MessageQueue.RabbitMq.Stubs
 {
     public class FakeMqPublisher : IRabbitMqPublisher
     {
-        public void Publish(HdEvent @event)
+        public void Publish(HdMessage @event)
         {
         }
 
-        public Task PublishAsync(HdEvent @event)
+        public Task PublishAsync(HdMessage @event)
         {
             return Task.CompletedTask;
         }
