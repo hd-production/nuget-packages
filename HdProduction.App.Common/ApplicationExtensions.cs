@@ -1,4 +1,3 @@
-using HdProduction.MessageQueue.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -8,16 +7,16 @@ namespace HdProduction.App.Common
 {
     public static class ApplicationExtensions
     {
-        public static IApplicationBuilder UseCors(this IApplicationBuilder app, IConfiguration configuration)
+        public static IApplicationBuilder UseCors(this IApplicationBuilder app, IConfigurationSection corsConfig)
         {
-            return app.UseCors(pb => InitCorsOptions(configuration, pb));
+            return app.UseCors(pb => InitCorsOptions(corsConfig, pb));
         }
 
-        private static void InitCorsOptions(IConfiguration configuration, CorsPolicyBuilder policyBuilder)
+        private static void InitCorsOptions(IConfigurationSection corsConfig, CorsPolicyBuilder policyBuilder)
         {
-            string origins = configuration.GetValue<string>("Cors:origins");
-            string methods = configuration.GetValue<string>("Cors:methods");
-            string headers = configuration.GetValue<string>("Cors:headers");
+            string origins = corsConfig.GetValue<string>("origins");
+            string methods = corsConfig.GetValue<string>("methods");
+            string headers = corsConfig.GetValue<string>("headers");
             if (origins == CorsConstants.AnyOrigin)
                 policyBuilder.AllowAnyOrigin();
             else
@@ -32,11 +31,11 @@ namespace HdProduction.App.Common
                 policyBuilder.WithHeaders(headers.Split(','));
         }
         
-        public static IRabbitMqConsumer SetMessageConsumer(this IApplicationBuilder app)
+        public static T ResolveService<T>(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
-                return serviceScope.ServiceProvider.GetService<IRabbitMqConsumer>();
+                return serviceScope.ServiceProvider.GetService<T>();
             }
         }
     }
